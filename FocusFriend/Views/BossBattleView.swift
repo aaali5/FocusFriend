@@ -45,7 +45,7 @@ struct BossBattleView: View {
                     Spacer()
                     Image(systemName: "shield.fill")
                         .font(.title2)
-                        .foregroundStyle(.bossRed)
+                        .foregroundStyle(Color.bossRed)
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)

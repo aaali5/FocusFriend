@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 @main
 struct FocusFriendApp: App {
@@ -9,6 +10,11 @@ struct FocusFriendApp: App {
             ContentView()
                 .environmentObject(engine)
                 .preferredColorScheme(.dark)
+                .onAppear {
+                    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+                    NotificationManager.scheduleStreakReminder(streakDays: engine.state.streakDays)
+                    NotificationManager.scheduleDailyQuestReminder()
+                }
         }
     }
 }

@@ -54,13 +54,29 @@ enum SkillBranch: String, CaseIterable {
 // MARK: - Data
 
 let quests: [Quest] = [
-    // Daily
+    // Daily (rotating pool — 3 selected each day)
     Quest(id: "daily-1", title: "Morning Focus", description: "Complete a 25-min session before 10am", target: 1, xpReward: 150, category: .daily, unit: "session"),
     Quest(id: "daily-2", title: "Deep Dive", description: "Complete a 60-min session without interruption", target: 1, xpReward: 250, category: .daily, unit: "session"),
     Quest(id: "daily-3", title: "Triple Threat", description: "Complete 3 focus sessions today", target: 3, xpReward: 200, category: .daily, unit: "sessions"),
-    // Weekly
+    Quest(id: "daily-4", title: "Early Bird", description: "Start a focus session before 8am", target: 1, xpReward: 175, category: .daily, unit: "session"),
+    Quest(id: "daily-5", title: "Power Hour", description: "Accumulate 60 minutes of focus today", target: 60, xpReward: 200, category: .daily, unit: "minutes"),
+    Quest(id: "daily-6", title: "Quick Burst", description: "Complete a 15-minute session", target: 1, xpReward: 100, category: .daily, unit: "session"),
+    Quest(id: "daily-7", title: "Double Down", description: "Complete 2 sessions back to back", target: 2, xpReward: 175, category: .daily, unit: "sessions"),
+    Quest(id: "daily-8", title: "Night Owl", description: "Focus session after 8pm", target: 1, xpReward: 150, category: .daily, unit: "session"),
+    Quest(id: "daily-9", title: "Half Hour Hero", description: "Complete a 30+ minute session", target: 1, xpReward: 150, category: .daily, unit: "session"),
+    Quest(id: "daily-10", title: "Afternoon Push", description: "Focus session between 1-5pm", target: 1, xpReward: 125, category: .daily, unit: "session"),
+    Quest(id: "daily-11", title: "Marathon Prep", description: "Accumulate 90 minutes today", target: 90, xpReward: 250, category: .daily, unit: "minutes"),
+    Quest(id: "daily-12", title: "Four-Timer", description: "Complete 4 focus sessions today", target: 4, xpReward: 275, category: .daily, unit: "sessions"),
+    Quest(id: "daily-13", title: "Beat Yesterday", description: "Focus more minutes than yesterday", target: 1, xpReward: 200, category: .daily, unit: "session"),
+    Quest(id: "daily-14", title: "Sunrise Grind", description: "Complete a 45-min session before noon", target: 1, xpReward: 225, category: .daily, unit: "session"),
+    Quest(id: "daily-15", title: "Steady Pace", description: "Focus for at least 20 minutes", target: 1, xpReward: 100, category: .daily, unit: "session"),
+    // Weekly (rotating pool — 2 selected each week)
     Quest(id: "weekly-1", title: "Marathon Week", description: "Accumulate 10+ hours of total focus time", target: 10, xpReward: 800, category: .weekly, unit: "hours"),
     Quest(id: "weekly-2", title: "Consistency Crown", description: "Focus every day this week (7 days)", target: 7, xpReward: 1000, category: .weekly, unit: "days"),
+    Quest(id: "weekly-3", title: "Early Riser", description: "Start 3 sessions before 9am this week", target: 3, xpReward: 600, category: .weekly, unit: "sessions"),
+    Quest(id: "weekly-4", title: "Boss Slayer", description: "Deal 200+ HP boss damage this week", target: 200, xpReward: 750, category: .weekly, unit: "HP"),
+    Quest(id: "weekly-5", title: "Session Streak", description: "Complete at least 1 session for 5 consecutive days", target: 5, xpReward: 900, category: .weekly, unit: "days"),
+    Quest(id: "weekly-6", title: "Skill Builder", description: "Unlock 2 skill nodes this week", target: 2, xpReward: 700, category: .weekly, unit: "skills"),
     // Epic
     Quest(id: "epic-1", title: "The Hundred", description: "Complete 100 total focus sessions", target: 100, xpReward: 5000, category: .epic, unit: "sessions"),
     Quest(id: "epic-2", title: "Iron Will", description: "Achieve a 30-day focus streak", target: 30, xpReward: 8000, category: .epic, unit: "days"),

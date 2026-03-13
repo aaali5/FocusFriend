@@ -3,37 +3,25 @@ import SwiftUI
 // MARK: - Tab Definition
 
 enum AppTab: String, CaseIterable, Identifiable {
-    case dashboard
-    case timer
-    case quests
-    case battle
-    case skills
-    case streak
-    case stats
+    case home
+    case focus
+    case journey
 
     var id: String { rawValue }
 
     var label: String {
         switch self {
-        case .dashboard: return "Home"
-        case .timer:     return "Timer"
-        case .quests:    return "Quests"
-        case .battle:    return "Battle"
-        case .skills:    return "Skills"
-        case .streak:    return "Streak"
-        case .stats:     return "Stats"
+        case .home:    return "Home"
+        case .focus:   return "Focus"
+        case .journey: return "Journey"
         }
     }
 
     var icon: String {
         switch self {
-        case .dashboard: return "house.fill"
-        case .timer:     return "timer"
-        case .quests:    return "scroll.fill"
-        case .battle:    return "shield.fill"
-        case .skills:    return "sparkles"
-        case .streak:    return "flame.fill"
-        case .stats:     return "chart.bar.fill"
+        case .home:    return "house.fill"
+        case .focus:   return "timer"
+        case .journey: return "map.fill"
         }
     }
 }
@@ -42,7 +30,7 @@ enum AppTab: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @EnvironmentObject private var engine: GameEngine
-    @State private var selectedTab: AppTab = .dashboard
+    @State private var selectedTab: AppTab = .focus
     @Namespace private var tabAnimation
 
     private let darkNavy = Color(red: 0.04, green: 0.055, blue: 0.1)
@@ -56,20 +44,12 @@ struct ContentView: View {
             // Tab content
             Group {
                 switch selectedTab {
-                case .dashboard:
-                    DashboardView()
-                case .timer:
+                case .home:
+                    HomeView()
+                case .focus:
                     FocusTimerView()
-                case .quests:
-                    QuestBoardView()
-                case .battle:
-                    BossBattleView()
-                case .skills:
-                    SkillTreeView()
-                case .streak:
-                    StreakTrackerView()
-                case .stats:
-                    StatsView()
+                case .journey:
+                    JourneyView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

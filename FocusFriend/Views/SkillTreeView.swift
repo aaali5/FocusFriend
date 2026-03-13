@@ -44,7 +44,7 @@ struct SkillTreeView: View {
                         Capsule()
                             .strokeBorder(Color.xpGold.opacity(0.4), lineWidth: 1)
                     )
-                    .foregroundStyle(.xpGold)
+                    .foregroundStyle(Color.xpGold)
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)

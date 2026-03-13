@@ -1,4 +1,6 @@
 import SwiftUI
+import Combine
+import UserNotifications
 
 // MARK: - Timer State Machine
 
@@ -11,6 +13,7 @@ private enum TimerPhase {
 
 struct FocusTimerView: View {
     @EnvironmentObject private var engine: GameEngine
+    @Environment(\.scenePhase) private var scenePhase
     @State private var phase: TimerPhase = .idle
     @State private var selectedMinutes: Int = 25
     @State private var remainingSeconds: Int = 25 * 60
@@ -20,9 +23,14 @@ struct FocusTimerView: View {
     @State private var pulseRing: Bool = false
     @State private var showCompletionGlow: Bool = false
     @State private var foxBounce: Bool = false
+    @State private var sessionStartDate: Date?
+    @State private var pausedRemainingSeconds: Int?
+    @State private var focusLabel: String = ""
 
-    // Presets
-    private let presets: [Int] = [15, 25, 45, 60]
+    // Presets (skill-aware: endurance-2 adds 90m, endurance-4 adds 120m)
+    private var presets: [Int] {
+        GameEngine.timerPresets(skills: engine.state.skills)
+    }
 
     // Computed
     private var totalSeconds: Int { selectedMinutes * 60 }
@@ -40,10 +48,10 @@ struct FocusTimerView: View {
     }
     private var potentialXP: Int {
         let elapsed = Double(totalSeconds - remainingSeconds) / 60.0
-        return Int(elapsed * Double(GameEngine.xpPerMinute(level: engine.state.level)) * GameEngine.streakMultiplier(engine.state.streakDays))
+        return Int(elapsed * Double(engine.effectiveXPPerMinute()) * engine.effectiveStreakMultiplier())
     }
     private var estimatedTotalXP: Int {
-        Int(Double(selectedMinutes * GameEngine.xpPerMinute(level: engine.state.level)) * GameEngine.streakMultiplier(engine.state.streakDays))
+        Int(Double(selectedMinutes) * Double(engine.effectiveXPPerMinute()) * engine.effectiveStreakMultiplier())
     }
     private var estimatedBossDamage: Int {
         selectedMinutes
@@ -67,6 +75,56 @@ struct FocusTimerView: View {
                 // MARK: - Duration Presets
                 if phase == .idle {
                     presetButtons
+                }
+
+                // MARK: - Focus Label Input
+                if phase == .idle {
+                    VStack(spacing: 8) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "tag.fill")
+                                .font(.system(size: 14))
+                                .foregroundStyle(Color.xpGold.opacity(0.6))
+
+                            TextField("What are you focusing on?", text: $focusLabel)
+                                .font(.system(size: 15, weight: .medium, design: .rounded))
+                                .foregroundStyle(.white)
+                                .tint(Color.xpGold)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color.white.opacity(0.06))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                )
+                        )
+
+                        // Recent labels as quick-pick chips
+                        if !engine.state.recentLabels.isEmpty {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    ForEach(engine.state.recentLabels, id: \.self) { recentLabel in
+                                        Button {
+                                            focusLabel = recentLabel
+                                        } label: {
+                                            Text(recentLabel)
+                                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                                .foregroundStyle(focusLabel == recentLabel ? Color.navyBg : .white.opacity(0.6))
+                                                .padding(.horizontal, 12)
+                                                .padding(.vertical, 6)
+                                                .background(
+                                                    Capsule()
+                                                        .fill(focusLabel == recentLabel ? Color.xpGold : Color.white.opacity(0.08))
+                                                )
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 // MARK: - Live XP Counter (during focus)
@@ -100,6 +158,20 @@ struct FocusTimerView: View {
             }
             if remainingSeconds <= 0 {
                 finishSession()
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active && phase == .running, let start = sessionStartDate {
+                let elapsed = Int(Date().timeIntervalSince(start))
+                let newRemaining = max(0, totalSeconds - elapsed)
+                remainingSeconds = newRemaining
+                if newRemaining <= 0 {
+                    finishSession()
+                } else {
+                    // Restart the publisher to keep ticking in foreground
+                    stopPublisher()
+                    startPublisher()
+                }
             }
         }
     }
@@ -231,7 +303,7 @@ struct FocusTimerView: View {
     // MARK: - Preset Buttons
 
     private var presetButtons: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: presets.count > 4 ? 8 : 12) {
             ForEach(presets, id: \.self) { mins in
                 Button {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.7)) {
@@ -240,11 +312,11 @@ struct FocusTimerView: View {
                     }
                 } label: {
                     Text("\(mins)m")
-                        .font(.system(size: 15, weight: .semibold, design: .rounded))
+                        .font(.system(size: presets.count > 4 ? 13 : 15, weight: .semibold, design: .rounded))
                         .foregroundStyle(
                             selectedMinutes == mins ? Color.navyBg : .white.opacity(0.7)
                         )
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, presets.count > 4 ? 14 : 20)
                         .padding(.vertical, 10)
                         .background(
                             Capsule()
@@ -401,13 +473,13 @@ struct FocusTimerView: View {
             infoCard(
                 icon: "sparkles",
                 title: "XP Rate",
-                value: "\(GameEngine.xpPerMinute(level: engine.state.level))/min",
+                value: "\(engine.effectiveXPPerMinute())/min",
                 accent: Color.xpGold
             )
 
             infoCard(
                 icon: "flame.fill",
-                title: "Streak x\(String(format: "%.1f", GameEngine.streakMultiplier(engine.state.streakDays)))",
+                title: "Streak x\(String(format: "%.1f", engine.effectiveStreakMultiplier()))",
                 value: "\(engine.state.streakDays) days",
                 accent: Color.foxOrange
             )
@@ -482,6 +554,9 @@ struct FocusTimerView: View {
 
             // Stats
             VStack(spacing: 10) {
+                if !focusLabel.isEmpty {
+                    completionRow(label: "Focus", value: focusLabel)
+                }
                 completionRow(label: "Duration", value: "\(elapsedMinutes) min")
                 completionRow(label: "XP Earned", value: "+\(earnedXP)", highlight: true)
                 completionRow(label: "Boss Damage", value: "\(elapsedMinutes) HP")
@@ -517,8 +592,11 @@ struct FocusTimerView: View {
 
     private func startTimer() {
         remainingSeconds = selectedMinutes * 60
+        sessionStartDate = Date()
+        pausedRemainingSeconds = nil
         phase = .running
         startPublisher()
+        scheduleCompletionNotification(secondsFromNow: remainingSeconds)
         pulseRing = true
 
         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
@@ -531,35 +609,51 @@ struct FocusTimerView: View {
 
     private func pauseTimer() {
         phase = .paused
+        pausedRemainingSeconds = remainingSeconds
+        sessionStartDate = nil
         stopPublisher()
+        cancelCompletionNotification()
         pulseRing = false
     }
 
     private func resumeTimer() {
+        // Set a new start date so elapsed-time math works on foreground re-entry
+        let remaining = pausedRemainingSeconds ?? remainingSeconds
+        sessionStartDate = Date().addingTimeInterval(-Double(totalSeconds - remaining))
+        pausedRemainingSeconds = nil
         phase = .running
         startPublisher()
+        scheduleCompletionNotification(secondsFromNow: remaining)
         pulseRing = true
     }
 
     private func resetTimer() {
         phase = .idle
         stopPublisher()
+        cancelCompletionNotification()
+        sessionStartDate = nil
+        pausedRemainingSeconds = nil
         remainingSeconds = selectedMinutes * 60
         earnedXP = 0
         pulseRing = false
         showCompletionGlow = false
+        focusLabel = ""
     }
 
     private func finishSession() {
         stopPublisher()
+        cancelCompletionNotification()
+        sessionStartDate = nil
+        pausedRemainingSeconds = nil
         pulseRing = false
 
+        let timerRanToZero = remainingSeconds <= 0
         let minutesFocused = max(1, (totalSeconds - remainingSeconds + 30) / 60)
-        let multiplier = GameEngine.streakMultiplier(engine.state.streakDays)
-        let xpPerMin = GameEngine.xpPerMinute(level: engine.state.level)
+        let multiplier = engine.effectiveStreakMultiplier()
+        let xpPerMin = engine.effectiveXPPerMinute()
         earnedXP = Int(Double(minutesFocused * xpPerMin) * multiplier)
 
-        engine.completeFocusSession(minutes: minutesFocused)
+        engine.completeFocusSession(minutes: minutesFocused, completedFull: timerRanToZero, label: focusLabel.isEmpty ? nil : focusLabel)
 
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
             phase = .completed
@@ -575,6 +669,35 @@ struct FocusTimerView: View {
             let impact = UIImpactFeedbackGenerator(style: .heavy)
             impact.impactOccurred()
         }
+    }
+
+    // MARK: - Notification Helpers
+
+    private static let notificationIdentifier = "focusfriend.timer.completion"
+
+    private func scheduleCompletionNotification(secondsFromNow: Int) {
+        cancelCompletionNotification()
+
+        let content = UNMutableNotificationContent()
+        content.title = "Focus Session Complete!"
+        content.body = "Great work! Come back to claim your XP."
+        content.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(
+            timeInterval: max(1, TimeInterval(secondsFromNow)),
+            repeats: false
+        )
+        let request = UNNotificationRequest(
+            identifier: Self.notificationIdentifier,
+            content: content,
+            trigger: trigger
+        )
+        UNUserNotificationCenter.current().add(request)
+    }
+
+    private func cancelCompletionNotification() {
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: [Self.notificationIdentifier])
     }
 
     // MARK: - Publisher Management

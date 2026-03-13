@@ -6,20 +6,24 @@ struct QuestBoardView: View {
     @EnvironmentObject private var engine: GameEngine
     @State private var selectedCategory: QuestCategory = .daily
 
+    private var visibleQuests: [Quest] {
+        engine.activeQuests()
+    }
+
     private var filteredQuests: [Quest] {
-        quests.filter { $0.category == selectedCategory }
+        visibleQuests.filter { $0.category == selectedCategory }
     }
 
     private var completedCount: Int {
-        quests.filter { engine.state.questCompleted[$0.id] == true }.count
+        visibleQuests.filter { engine.state.questCompleted[$0.id] == true }.count
     }
 
     private var totalAvailableXP: Int {
-        quests.reduce(0) { $0 + $1.xpReward }
+        visibleQuests.reduce(0) { $0 + $1.xpReward }
     }
 
     private var earnedXP: Int {
-        quests
+        visibleQuests
             .filter { engine.state.questCompleted[$0.id] == true }
             .reduce(0) { $0 + $1.xpReward }
     }
@@ -116,7 +120,7 @@ struct QuestBoardView: View {
     private var summaryFooter: some View {
         HStack(spacing: 0) {
             VStack(spacing: 4) {
-                Text("\(completedCount)/\(quests.count)")
+                Text("\(completedCount)/\(visibleQuests.count)")
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                 Text("Completed")
@@ -132,7 +136,7 @@ struct QuestBoardView: View {
             VStack(spacing: 4) {
                 Text(formatNumber(earnedXP))
                     .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundStyle(.xpGold)
+                    .foregroundStyle(Color.xpGold)
                 Text("XP Earned")
                     .font(.caption2)
                     .foregroundStyle(.white.opacity(0.4))
