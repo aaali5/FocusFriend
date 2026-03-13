@@ -166,6 +166,9 @@ class GameEngine: ObservableObject {
             xpEarned *= 1.50
         }
 
+        // --- Prestige bonus: +5% per ascension ---
+        xpEarned *= prestigeXPMultiplier
+
         let finalXP = Int(floor(xpEarned))
 
         // --- Boss damage calculation ---
@@ -279,6 +282,32 @@ class GameEngine: ObservableObject {
         // Update streak reminder
         NotificationManager.scheduleStreakReminder(streakDays: state.streakDays)
 
+        save()
+    }
+
+    // MARK: - Prestige / Ascension
+
+    /// Whether the player can ascend (prestige). Requires level 100.
+    var canAscend: Bool {
+        state.level >= 100
+    }
+
+    /// Prestige bonus: +5% XP per prestige level.
+    var prestigeXPMultiplier: Double {
+        1.0 + Double(state.prestigeLevel) * 0.05
+    }
+
+    /// Ascend: reset level and skills, keep streak/history/bosses, gain prestige star.
+    func ascend() {
+        guard canAscend else { return }
+        state.prestigeLevel += 1
+        state.xp = 0
+        state.level = 1
+        state.skillPoints = 0
+        state.skills = [:]
+        // Boss HP gets harder each prestige
+        state.bossHP = 1200 + state.bossDefeats * 200 + state.prestigeLevel * 400
+        state.bossMaxHP = state.bossHP
         save()
     }
 

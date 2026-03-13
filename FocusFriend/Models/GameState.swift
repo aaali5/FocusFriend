@@ -45,6 +45,7 @@ struct GameState: Codable {
     var lastWeeklyReset: String?      // ISO date YYYY-MM-DD for weekly rotation
     var weeklySkillsUnlocked: Int     // Skills unlocked this week (for weekly-6)
     var weeklyEarlySessions: Int      // Sessions started before 9am this week (for weekly-3)
+    var prestigeLevel: Int            // Number of times player has ascended
 
     // Custom decoder so existing saved states (without the new fields) load safely.
     init(from decoder: Decoder) throws {
@@ -77,6 +78,7 @@ struct GameState: Codable {
         lastWeeklyReset = try? c.decode(String.self, forKey: .lastWeeklyReset)
         weeklySkillsUnlocked = (try? c.decode(Int.self, forKey: .weeklySkillsUnlocked)) ?? 0
         weeklyEarlySessions = (try? c.decode(Int.self, forKey: .weeklyEarlySessions)) ?? 0
+        prestigeLevel = (try? c.decode(Int.self, forKey: .prestigeLevel)) ?? 0
     }
 
     // Memberwise initializer (used by defaultState and other call sites).
@@ -99,7 +101,8 @@ struct GameState: Codable {
         activeWeeklyQuests: [String] = [],
         lastWeeklyReset: String? = nil,
         weeklySkillsUnlocked: Int = 0,
-        weeklyEarlySessions: Int = 0
+        weeklyEarlySessions: Int = 0,
+        prestigeLevel: Int = 0
     ) {
         self.xp = xp
         self.level = level
@@ -128,6 +131,7 @@ struct GameState: Codable {
         self.lastWeeklyReset = lastWeeklyReset
         self.weeklySkillsUnlocked = weeklySkillsUnlocked
         self.weeklyEarlySessions = weeklyEarlySessions
+        self.prestigeLevel = prestigeLevel
     }
 }
 

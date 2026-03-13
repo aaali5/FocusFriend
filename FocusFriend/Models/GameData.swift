@@ -87,6 +87,11 @@ let bosses: [Boss] = [
     Boss(name: "Doom Scroller", type: "Social Media Serpent", emoji: "🐍", description: "A venomous serpent that feeds on endless scrolling. Its hypnotic gaze keeps victims trapped in feeds forever.", color: "#ef4444"),
     Boss(name: "Notification Swarm", type: "Buzzing Insect Horde", emoji: "🐝", description: "A relentless swarm of buzzing notifications. Each ping saps your focus and feeds the horde.", color: "#eab308"),
     Boss(name: "Procrastination Phantom", type: "Shadowy Ghost", emoji: "👻", description: "An ethereal phantom that whispers 'just five more minutes.' Its touch drains motivation and warps time.", color: "#8b5cf6"),
+    Boss(name: "Doomscroll Dragon", type: "Ancient Feed Wyrm", emoji: "🐉", description: "An ancient dragon whose breath pulls you into infinite feeds. Each scale is a lost hour.", color: "#dc2626"),
+    Boss(name: "Anxiety Imp", type: "Worry Sprite", emoji: "👹", description: "A jittery imp that floods your mind with what-ifs. It grows stronger when you check your phone.", color: "#f59e0b"),
+    Boss(name: "FOMO Wraith", type: "Fear Specter", emoji: "💀", description: "A hollow specter that convinces you everything important is happening without you.", color: "#6366f1"),
+    Boss(name: "Tab Hydra", type: "Multi-headed Browser Beast", emoji: "🐙", description: "Every tab you open grows a new head. Only deep focus can sever them all.", color: "#14b8a6"),
+    Boss(name: "Burnout Phoenix", type: "Exhaustion Firebird", emoji: "🔥", description: "Born from overwork, it rises when you ignore rest. Balance is the only weapon.", color: "#f43f5e"),
 ]
 
 let skillTree: [SkillNode] = [

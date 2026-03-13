@@ -1,2 +1,2 @@
-# FocusFriend
-ScreenQuest - gamified focus timer iOS app with spirit fox companion (SwiftUI)
+# Foxlock
+Gamified focus timer iOS app with spirit fox companion (SwiftUI)

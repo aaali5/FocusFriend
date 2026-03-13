@@ -61,9 +61,26 @@ struct HomeView: View {
                 FoxView(stage: stage, size: 180, isAnimating: true)
                     .frame(height: 190)
 
-                Text(stage.name)
-                    .font(.title2.bold())
-                    .foregroundStyle(stageColor)
+                HStack(spacing: 6) {
+                    Text(stage.name)
+                        .font(.title2.bold())
+                        .foregroundStyle(stageColor)
+
+                    if engine.state.prestigeLevel > 0 {
+                        HStack(spacing: 2) {
+                            ForEach(0..<min(engine.state.prestigeLevel, 5), id: \.self) { _ in
+                                Image(systemName: "star.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(Color(hex: "#fbbf24"))
+                            }
+                            if engine.state.prestigeLevel > 5 {
+                                Text("+\(engine.state.prestigeLevel - 5)")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(Color(hex: "#fbbf24"))
+                            }
+                        }
+                    }
+                }
 
                 Text("\(stage.tails)-Tail Spirit Fox")
                     .font(.subheadline)

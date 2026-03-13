@@ -1,10 +1,10 @@
-# Privacy Policy — ScreenQuest (FocusFriend)
+# Privacy Policy — Foxlock
 
 **Last updated: March 13, 2026**
 
 ## Overview
 
-ScreenQuest ("the App") is a focus timer app that helps you build productive habits through gamification. Your privacy is important to us.
+Foxlock ("the App") is a focus timer app that helps you build productive habits through gamification. Your privacy is important to us.
 
 ## Data Collection
 

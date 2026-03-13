@@ -6,6 +6,7 @@ struct JourneyView: View {
     @State private var selectedQuestCategory: QuestCategory = .daily
     @State private var selectedSkillNode: SkillNode?
     @State private var showUnlockConfirm = false
+    @State private var showAscendConfirm = false
 
     private var currentBoss: Boss {
         bosses[engine.state.currentBossIndex % bosses.count]
@@ -32,6 +33,11 @@ struct JourneyView: View {
                 // Header
                 journeyHeader
 
+                // Prestige banner (only when eligible)
+                if engine.canAscend {
+                    ascendBanner
+                }
+
                 // Active Boss (compact arena card)
                 bossSection
 
@@ -46,6 +52,16 @@ struct JourneyView: View {
             .padding(.bottom, 32)
         }
         .background(Color.navyBg.ignoresSafeArea())
+        .alert("Ascend", isPresented: $showAscendConfirm) {
+            Button("Cancel", role: .cancel) {}
+            Button("Ascend") {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    engine.ascend()
+                }
+            }
+        } message: {
+            Text("Reset to Level 1, clear skills, and gain a Prestige Star (+5% permanent XP bonus). Your streak, history, and boss kills are kept. Bosses get harder.\n\nPrestige \(engine.state.prestigeLevel) → \(engine.state.prestigeLevel + 1)")
+        }
         .alert("Unlock Skill", isPresented: $showUnlockConfirm) {
             Button("Cancel", role: .cancel) {
                 selectedSkillNode = nil
@@ -81,6 +97,22 @@ struct JourneyView: View {
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
+            // Prestige stars
+            if engine.state.prestigeLevel > 0 {
+                HStack(spacing: 2) {
+                    ForEach(0..<min(engine.state.prestigeLevel, 5), id: \.self) { _ in
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color(hex: "#fbbf24"))
+                    }
+                    if engine.state.prestigeLevel > 5 {
+                        Text("+\(engine.state.prestigeLevel - 5)")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color(hex: "#fbbf24"))
+                    }
+                }
+            }
+
             Spacer()
 
             // Skill points counter
@@ -105,6 +137,53 @@ struct JourneyView: View {
             )
             .foregroundStyle(Color.xpGold)
         }
+    }
+
+    // MARK: - Ascend Banner
+
+    private var ascendBanner: some View {
+        Button {
+            showAscendConfirm = true
+        } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 24))
+                    .foregroundStyle(Color(hex: "#fbbf24"))
+                    .shadow(color: Color(hex: "#fbbf24").opacity(0.5), radius: 8)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Ready to Ascend")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text("Reset to Lv.1 for a Prestige Star & +5% XP forever")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.white.opacity(0.6))
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Color(hex: "#fbbf24").opacity(0.7))
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(hex: "#fbbf24").opacity(0.15), Color(hex: "#f97316").opacity(0.1)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(Color(hex: "#fbbf24").opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Boss Section (compact)
