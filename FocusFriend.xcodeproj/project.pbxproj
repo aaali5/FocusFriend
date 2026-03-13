@@ -26,6 +26,7 @@
 		C23123BA4C0A0DA88764FFA9 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A44A565D146CBAF9CE086C8 /* StatsView.swift */; };
 		E4F08A565549657F5605435D /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5303B1BD95E0DD5BA38DFF1A /* ColorExtension.swift */; };
 		E89ED31D29471EFE3F324109 /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2AD1994D8555B19322A3C7 /* JourneyView.swift */; };
+		F3E1735BB6A882B028F3AECA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C9B9232849D48BBC24DD38C8 /* PrivacyInfo.xcprivacy */; };
 		F6477DB6C749E6325CF5A83F /* FoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BEBC50F53873A56B57FBE6 /* FoxView.swift */; };
 		FCC78C440846CFADD85ED3D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C002FA9AD561D9C137441E03 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -50,6 +51,7 @@
 		B8EF0FB592DBCE0A4AA542A9 /* SkillTreeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillTreeView.swift; sourceTree = "<group>"; };
 		C002FA9AD561D9C137441E03 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C99558AF466E0C37000BF437 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
+		C9B9232849D48BBC24DD38C8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E0D0484CB49EBBFA54009F93 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		FA815832F53F715DE47E8CF3 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		FBCCEC58D498A0459637CAC0 /* GameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameEngine.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				6A723B348220DBD73F003B30 /* ContentView.swift */,
 				0AC678C182FDAA11701AE122 /* FocusFriendApp.swift */,
 				AA7621CDD577F36D15E4E190 /* Info.plist */,
+				C9B9232849D48BBC24DD38C8 /* PrivacyInfo.xcprivacy */,
 				0E8E5A3521960B056D506B40 /* Components */,
 				EE8877448BF947DD44F442BA /* Models */,
 				DC7FA82B38BE80C96FC26DF2 /* Utilities */,
@@ -194,6 +197,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FCC78C440846CFADD85ED3D8 /* Assets.xcassets in Resources */,
+				F3E1735BB6A882B028F3AECA /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -23,7 +23,12 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>UILaunchScreen</key>
-    <dict/>
+    <dict>
+        <key>UIColorName</key>
+        <string>NavyBg</string>
+    </dict>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>UIRequiredDeviceCapabilities</key>
     <array>
         <string>armv7</string>
